@@ -1,5 +1,5 @@
 """
-This is the code for running the whole tiny-yolo model.
+This is the code for running the whole thing.
 
 What's being done here:
 1. Open an image and reshape to (416, 416, 3)
