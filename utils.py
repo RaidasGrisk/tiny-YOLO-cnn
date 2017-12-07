@@ -136,6 +136,46 @@ def non_max_suppression(boxes, scores, classes, threshold=0.99):
     return boxes[:, pick, :], scores[pick], classes[pick]
 
 
+def rescale_coordinates_back_to_original_image(boxes, height, width):
+
+    """
+    Rescale box coordinates back to original image
+    Arguments:
+    boxes after non-max-suppression
+    height and width of an original image
+    Returns:
+    A list of new boxes with rescaled coordinates
+    """
+
+    new_boxes = []
+    _, all_boxes, _ = np.shape(boxes)
+    for box in range(all_boxes):
+        top, left, bottom, right = boxes[:, box, :]
+        top = int(top * height)
+        left = int(left * width)
+        bottom = int(bottom * height)
+        right = int(right * width)
+        new_boxes.append([top, left, bottom, right])
+
+    return new_boxes
+
+
+def get_colors():
+    """
+    Generate 80 rgb colors for each class
+    Returns: a list of random 80 colors
+    """
+    # Generate colors for drawing bounding boxes
+    # https://github.com/allanzelener/YAD2K/blob/master/test_yolo.py
+    hsv_tuples = [(x / 80, 1., 1.) for x in range(80)]
+    colors = list(map(lambda x: colorsys.hsv_to_rgb(*x), hsv_tuples))
+    colors = list(map(lambda x: (int(x[0] * 255), int(x[1] * 255), int(x[2] * 255)), colors))
+    random.seed(2)  # Fixed seed for consistent colors across runs
+    random.shuffle(colors)  # Shuffle colors to de-correlate adjacent classes
+    random.seed(None)  # Reset seed to default
+    return colors
+
+
 object_list = ['person', 'bicycle', 'car', 'motorbike', 'aeroplane', 'bus', 'train', 'truck', 'boat', 'traffic light',
                'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow',
                'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee',
@@ -146,11 +186,3 @@ object_list = ['person', 'bicycle', 'car', 'motorbike', 'aeroplane', 'bus', 'tra
                'cell phone', 'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase',
                'scissors', 'teddy bear', 'hair drier', 'toothbrush']
 
-# Generate colors for drawing bounding boxes
-# https://github.com/allanzelener/YAD2K/blob/master/test_yolo.py
-hsv_tuples = [(x / 80, 1., 1.) for x in range(80)]
-colors = list(map(lambda x: colorsys.hsv_to_rgb(*x), hsv_tuples))
-colors = list(map(lambda x: (int(x[0] * 255), int(x[1] * 255), int(x[2] * 255)), colors))
-random.seed(2)  # Fixed seed for consistent colors across runs
-random.shuffle(colors)  # Shuffle colors to de-correlate adjacent classes
-random.seed(None)  # Reset seed to default
