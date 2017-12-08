@@ -36,6 +36,13 @@ def test_on_video(filter_threshold, iou_threshold, video_source):
 
         # read frames
         stream, frame = cam.read()
+
+        # quit
+        if cv2.waitKey(1) == 27 or not stream:  # esc
+            cam.release()
+            cv2.destroyAllWindows()
+            break
+
         height, width, _ = frame.shape
         resized_frame = cv2.resize(frame, (416, 416)).reshape([1, 416, 416, 3]) / 255.
 
@@ -64,10 +71,6 @@ def test_on_video(filter_threshold, iou_threshold, video_source):
 
         # stream video
         cv2.imshow('web-cam', frame)
-        if cv2.waitKey(1) == 27:  # esc
-            cam.release()
-            cv2.destroyAllWindows()
-            break
 
 
 def test_on_image(filter_threshold, iou_threshold, image_source, output_dir):
@@ -119,4 +122,4 @@ def test_on_image(filter_threshold, iou_threshold, image_source, output_dir):
 # main
 Model = model()
 test_on_image(filter_threshold=0.4, iou_threshold=0.9, image_source='\\images\\image0.jpg', output_dir='\\output_image')
-test_on_video(filter_threshold=0.3, iou_threshold=0.8, video_source=0)
+test_on_video(filter_threshold=0.4, iou_threshold=0.9, video_source='vid0.mp4')
